@@ -18,7 +18,7 @@ Method  POST
 
 Router.post("/signup", async (req, res) =>{
     try{
-        await UserModel.findByEmailAndPhone ( email, phoneNumber);
+        await UserModel.findByEmailAndPhone (req.body.credentials);
 
         // save to DB
         const newUser = await UserModel.create( req.body.credentials );
@@ -43,7 +43,7 @@ Method  POST
 
 Router.post("/signin", async (req, res) =>{
     try{
-        const user = await UserModel.findByEmailAndPassword ( email, phoneNumber);
+        const user = await UserModel.findByEmailAndPassword ( req.body.credentials );
 
         // generate JWT auth token
         const token = user.generateJwtToken ();
