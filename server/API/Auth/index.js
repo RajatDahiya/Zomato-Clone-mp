@@ -9,8 +9,8 @@ import { UserModel } from "../../database/user";
 const Router = express.Router();
 
 /* 
-Route   /signup
-Desc    signup with mail and pass
+Route   /signUP
+Desc    signUP with mail and pass
 Params  none
 Access  Public
 Method  POST
@@ -27,7 +27,29 @@ Router.post("/signup", async (req, res) =>{
         const token = newUser.generateJwtToken ();
 
         // return
-        return res.status(200).json({ token });
+        return res.status(200).json({ token, status: "success" });
+   } catch (error){
+       return res.status(500).json({ error: error.message });
+   }
+});
+
+/* 
+Route   /signIN
+Desc    signIN with mail and pass
+Params  none
+Access  Public
+Method  POST
+*/
+
+Router.post("/signin", async (req, res) =>{
+    try{
+        const user = await UserModel.findByEmailAndPassword ( email, phoneNumber);
+
+        // generate JWT auth token
+        const token = user.generateJwtToken ();
+
+        // return
+        return res.status(200).json({ token , status: "success"});
    } catch (error){
        return res.status(500).json({ error: error.message });
    }
