@@ -6,6 +6,10 @@ import passport from "passport";
 
 // Models
 import { UserModel } from "../../database/user";
+
+// validation
+import { ValidateSignup, ValidateSignin } from "../../validation/auth";
+
 const Router = express.Router();
 
 /* 
@@ -15,45 +19,38 @@ Params  none
 Access  Public
 Method  POST
 */
-
-Router.post("/signup", async (req, res) =>{
-    try{
-        await UserModel.findByEmailAndPhone (req.body.credentials);
-
-        // save to DB
-        const newUser = await UserModel.create( req.body.credentials );
-
-        // generate JWT auth token
-        const token = newUser.generateJwtToken ();
-
-        // return
-        return res.status(200).json({ token, status: "success" });
-   } catch (error){
-       return res.status(500).json({ error: error.message });
-   }
-});
-
-/* 
-Route   /signIN
-Desc    signIN with mail and pass
-Params  none
-Access  Public
-Method  POST
-*/
-
-Router.post("/signin", async (req, res) =>{
-    try{
-        const user = await UserModel.findByEmailAndPassword ( req.body.credentials );
-
-        // generate JWT auth token
-        const token = user.generateJwtToken ();
-
-        // return
-        return res.status(200).json({ token , status: "success"});
-   } catch (error){
-       return res.status(500).json({ error: error.message });
-   }
-});
+Router.post("/signup", async (req, res) => {
+        try {
+          await ValidateSignup(req.body.credentials);
+      
+          await UserModel.findByEmailAndPhone(req.body.credentials);
+          const newUser = await UserModel.create(req.body.credentials);
+          const token = newUser.generateJwtToken();
+          return res.status(200).json({ token, status: "success" });
+        } catch (error) {
+          return res.status(500).json({ error: error.message });
+        }
+      });
+      
+      /*
+      Route     /signin
+      Des       Signin with email and password
+      Params    none
+      Access    Public
+      Method    POST  
+      */
+      Router.post("/signin", async (req, res) => {
+        try {
+          await ValidateSignin(req.body.credentials);
+      
+          const user = await UserModel.findByEmailAndPassword(req.body.credentials);
+      
+          const token = user.generateJwtToken();
+          return res.status(200).json({ token, status: "success" });
+        } catch (error) {
+          return res.status(500).json({ error: error.message });
+        }
+      });
 
 /*
 Route     /google

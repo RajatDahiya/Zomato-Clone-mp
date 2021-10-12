@@ -5,6 +5,9 @@ import passport from "passport";
 // Database modal
 import { UserModel } from "../../database/allModels";
 
+// validation
+import { ValidateSignup, ValidateSignin } from "../../validation/auth";
+
 const Router = express.Router();
 
 /*
